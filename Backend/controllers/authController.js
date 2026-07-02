@@ -10,7 +10,7 @@ export const login = async(req, res)=>{
 
         if(!email || !password) return res.status(400).json({error: "Email and password are required"});
 
-        const user = await User.find({email})
+        const user = await User.findOne({email})
         if(!user){
             return res.status(401).json({error: "Invalid credentials"})
         }
