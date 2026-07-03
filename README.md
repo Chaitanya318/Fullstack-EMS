@@ -102,7 +102,7 @@ A modern **Full Stack MERN Employee Management System** built with **MongoDB, Ex
 
 Use the following credentials to explore the application.
 
-**Admin Login**
+**Employee Login**
 
 ```
 Email:
