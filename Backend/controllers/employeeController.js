@@ -10,7 +10,7 @@ export const getEmployees = async (req, res)=>{
         const where = {};
         if(department) where.department = department;
 
-        const employees = (await Employee.find(where)).toSorted({createdAt: -1}).populate("userId", "email role").lean();
+        const employees = await Employee.find(where).sort({createdAt: -1}).populate("userId", "email role").lean();
 
         const result = employees.map((emp)=>({
             ...emp,
@@ -28,7 +28,7 @@ export const getEmployees = async (req, res)=>{
 // POST /api/employees
 export const createEmployee = async (req, res)=>{
     try {
-        const {firstName, lastName, email, phone, position, basicSalary, allowances, deduction, joinDate, password, role, bio} = req.body;
+        const {firstName, lastName, email, phone, position, department, basicSalary, allowances, deduction, joinDate, password, role, bio} = req.body;
 
         if(!firstName || !lastName || !email || !password){
             return res.status(400).json({error: "Missing required feilds"})
@@ -73,7 +73,7 @@ export const createEmployee = async (req, res)=>{
 export const updateEmployee = async (req, res)=>{
     try {
         const {id} = req.params;
-        const {firstName, lastName, email, phone, position, basicSalary, allowances, deduction, password, role, bio, employmentStatus} = req.body;
+        const {firstName, lastName, email, phone, position, department, basicSalary, allowances, deduction, password, role, bio, employmentStatus} = req.body;
 
         const employee = await Employee.findById(id);
         if(!employee) return res.status(404).json({error: "Employee not found"});

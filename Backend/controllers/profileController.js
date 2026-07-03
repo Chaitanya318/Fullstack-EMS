@@ -15,7 +15,7 @@ export const getProfile = async(req, res) =>{
                 email: session.email
             })
         }
-        return req.json(employee)
+        return res.json(employee)
     } catch (error) {
         return res.status(500).json({error: "Failed to fetch profile"})
     }

@@ -2,14 +2,33 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { DEPARTMENTS } from '../assets/assets'
 import { Loader2Icon } from 'lucide-react'
+import api from '../api/axios'
+import toast from 'react-hot-toast'
 
 const EmplyeeForm = ({initaldata, onSuccess, onCancel}) => {
     const navigate = useNavigate()
-    const {loading, setloading} = useState(false)
+    const {loading, setLoading} = useState(false)
     const isEditMode = !!initaldata;
 
     const handleSubmit = async (e)=>{
          e.preventDefault();
+        //  setLoading(true)
+         const formData = new FormData(e.currentTarget)
+         if(isEditMode){
+            const pwd = formData.get("password")
+            if(!pwd) formData.delete("password")
+         }
+
+         try {
+            const url = isEditMode ? `/employees/${initaldata.id}` : "/employees"
+            const method = isEditMode ? "put" : "post";
+            await api[method](url, formData)
+            onSuccess ? onSuccess() : navigate("/employees")
+         } catch (error) {
+            toast.error(error.response?.data?.error || error.message)
+         } finally {
+            // setLoading(false)
+         }
 
     }
   return (
@@ -20,7 +39,7 @@ const EmplyeeForm = ({initaldata, onSuccess, onCancel}) => {
             <div className='grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm text-slate-700'>
                 <div>
                     <label className='block mb-2'>First Name</label>
-                    <input name='firstname' required defaultValue={initaldata?.firstName}/>
+                    <input name='firstName' required defaultValue={initaldata?.firstName}/>
                 </div>
                 <div>
                     <label className='block mb-2'>Last Name</label>

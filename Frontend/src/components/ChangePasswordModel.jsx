@@ -1,5 +1,6 @@
 import { Loader2Icon, LockIcon, X } from 'lucide-react';
 import React, { useState } from 'react'
+import api from '../api/axios';
 
 const ChangePasswordModel = ({open, onClose}) => {
     const [loading, setLoading] = useState(false);
@@ -7,6 +8,23 @@ const ChangePasswordModel = ({open, onClose}) => {
 
     const handleSubmit = async(e) =>{
         e.preventDefault()
+        setLoading(true)
+        setMessage({type: "", text: ""})
+        const formData = new FormData(e.currentTarget)
+        const currentPassword = formData.get("currentPassword");
+        const newPassword = formData.get("newPassword");
+
+        try {
+            const { data } = await api.post("/auth/change-password", {currentPassword, newPassword});
+            if(!data.success) throw new Error(data.error || "failed")
+                setMessage({type: "success", text: "password updated"})
+                e.target.reset();
+        } catch (error) {
+            setMessage({type: "error", text: error.message})
+        } finally {
+            setLoading(false);
+        }
+
     }
 
     if(!open) return null;
@@ -22,7 +40,7 @@ const ChangePasswordModel = ({open, onClose}) => {
                 <button onClick={onClose} className='rounded-lg hover:bg-slate-100 transition-colors text-slate-400 hover:text-slate-600'><X className='w-5 h-5'/></button>
             </div>
 
-            <form className='p-6 space-y-5'>
+            <form onSubmit={handleSubmit} className='p-6 space-y-5'>
                 {message.text && (
                     <div className={`p-3 rounded-xl text-sm flex items-start gap-3 ${message.type === "success" ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-rose-50 text-rose-700 border border-rose-200"}`}>
                         <div className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${message.type === "success" ? "bg-emerald-500" : "bg-rose-500"}`}/>

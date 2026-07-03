@@ -55,6 +55,7 @@ export const createLeave = async(req, res)=>{
 export const getLeaves = async(req, res)=>{
     try {
         const session = req.session;
+        const { status } = req.query;
         const isAdmin = session.role === "ADMIN";
         if (isAdmin) {
             const session = req.session;
@@ -73,7 +74,7 @@ export const getLeaves = async(req, res)=>{
         } else {
             const employee = await Employee.findOne({userId: session.userId,}).lean();
             if(!employee) return res.status(404).json({error: "Not found"});
-            const leaves = await LeaveApplication.find({employee: employee._id}).sort({createdAt: -1});
+            const leaves = await LeaveApplication.find({employeeId: employee._id}).sort({createdAt: -1});
             return res.json({
                 data: leaves,
                 employee: {
@@ -82,7 +83,7 @@ export const getLeaves = async(req, res)=>{
             })
         }
     } catch (error) {
-        return res.status(500).json({error: "failed"});
+        return res.status(500).json({error: "failed bro"});
     }
 }
 
